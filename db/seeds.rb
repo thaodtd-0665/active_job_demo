@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+user = User.create name: "Test", email: "test@mail.test"
+10.times do |i|
+  user.notifications.create content: "Content #{i}", status: Notification.statuses.keys.sample
+end

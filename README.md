@@ -1,24 +1,42 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This a demo for active job basic with Sidekiq
+- Install Redis
+$ sudo apt-get install redis-server
 
-Things you may want to cover:
+- Start Redis
+$ redis-server
 
-* Ruby version
+- Add gem Sidekiq
+gem "sidekiq"
 
-* System dependencies
+- Start Sidekiq
+$ bundle exec sidekiq
 
-* Configuration
+- Active Job setup with Sidekiq
+# config/application.rb
+config.active_job.queue_adapter = :sidekiq
 
-* Database creation
+- Creating a Job
+$ rails generate job job_name
 
-* Database initialization
+- Clear Sidekiq Jobs commands
+require 'sidekiq/api'
+# Clear retry set
+Sidekiq::RetrySet.new.clear
 
-* How to run the test suite
+# Clear scheduled jobs
+Sidekiq::ScheduledSet.new.clear
+# Clear 'Dead' jobs statistics
+Sidekiq::DeadSet.new.clear
 
-* Services (job queues, cache servers, search engines, etc.)
+# Clear 'Processed' and 'Failed' jobs statistics
+Sidekiq::Stats.new.reset
 
-* Deployment instructions
-
-* ...
+# Clear specific queue
+stats = Sidekiq::Stats.new
+stats.queues
+#=> {"default"=>5, "your_custom_queue"=>1}
+queue = Sidekiq::Queue.new("your_custom_queue")
+queue.count
+queue.clear
